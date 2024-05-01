@@ -1,0 +1,44 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load dataset
+df = pd.read_csv('Academic_Performance.csv')
+
+# Handle missing values
+median_score = df['score'].median()
+df['score'].fillna(median_score, inplace=True)
+df.fillna(0, inplace=True)
+
+# Identify and handle outliers using IQR
+Q1 = df.select_dtypes(include=['int64', 'float64']).quantile(0.25)
+Q3 = df.select_dtypes(include=['int64', 'float64']).quantile(0.75)
+IQR = Q3 - Q1
+outliers = ((df.select_dtypes(include=['int64', 'float64']) < (Q1 - 1.5 * IQR)) |
+            (df.select_dtypes(include=['int64', 'float64']) > (Q3 + 1.5 * IQR))).any(axis=1)
+df_cleaned = df[~outliers]
+
+# Apply aggregation function (max and mean)
+df_aggregated = df_cleaned.groupby('subject').agg({'score': ['max', 'mean']}).reset_index()
+df_aggregated.columns = ['subject', 'max_score', 'mean_score']
+
+# Draw scatter plot for 'hours_studied' vs 'score'
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='hours_studied', y='score', data=df_cleaned)
+plt.title('Scatter Plot of Hours Studied vs Score')
+plt.xlabel('Hours Studied')
+plt.ylabel('Score')
+plt.show()
+
+# Display outliers and Q1/Q3
+print("Rows with outliers:")
+print(df[outliers])
+print("\nQ1 (25th percentile):")
+print(Q1)
+print("\nQ3 (75th percentile):")
+print(Q3)
+
+# Display aggregated DataFrame
+print("\nAggregated DataFrame:")
+print(df_aggregated.head())

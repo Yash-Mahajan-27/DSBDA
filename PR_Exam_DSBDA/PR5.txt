@@ -1,0 +1,41 @@
+
+5 Descriptive Statistics – Measures of Central Tendency and variability Perform the following operations on any open source dataset (e.g., employee_2.csv/data.csv) 1.Provide summary statistics (mean, median, minimum) for a dataset (age, salary etc.) with numeric variables
+2.Grouped by one of the qualitative (categorical) variable. For example, if your categorical variable is age groups and quantitative variable is income, then provide summary statistics of income grouped by the age groups. Create a list that contains a numeric value for each response to the categorical variable.
+3. Perform grouping on and display JOB_ID and it's count
+4.Show data visualization for any column
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+df = pd.read_csv('data.csv')  # Replace 'data.csv' with your dataset file path
+
+# Summary statistics for numeric variables
+numeric_summary = df.describe()
+print("Summary Statistics for Numeric Variables:")
+print(numeric_summary)
+
+# Grouped summary statistics by a categorical variable
+categorical_variable = 'age_group'  # Replace with your categorical variable
+quantitative_variable = 'salary'     # Replace with your quantitative variable
+
+grouped_summary = df.groupby(categorical_variable)[quantitative_variable].describe()
+print(f"\nGrouped Summary Statistics by {categorical_variable}:")
+print(grouped_summary)
+
+# Count of JOB_ID groups
+job_id_counts = df['JOB_ID'].value_counts()
+print("\nCount of JOB_ID Groups:")
+print(job_id_counts)
+
+# Data visualization for any column
+column_for_visualization = 'salary'  # Replace with any column name
+
+plt.figure(figsize=(8, 6))
+sns.histplot(df[column_for_visualization], bins=20, kde=True)
+plt.title(f'Distribution of {column_for_visualization}')
+plt.xlabel(column_for_visualization)
+plt.ylabel('Frequency')
+plt.show()

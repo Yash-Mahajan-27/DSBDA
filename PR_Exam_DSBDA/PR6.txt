@@ -1,0 +1,63 @@
+6 Descriptive Statistics – Measures of Central Tendency and variability Perform the following operations on any open source dataset (e.g., employee_2.csv/data.csv) 1.Provide summary statistics (maximum, standard deviation, covaiance) for a dataset (age, salary etc.) with numeric variables
+2. Grouped by one of the qualitative (categorical) variable. For example, if your categorical variable is age groups and quantitative variable is income, then provide summary statistics of income grouped by the age groups. Create a list that contains a numeric value for each response to the categorical variable.
+3. Perform grouping on and display JOB_ID and it's count
+4.Show data visualization for any column
+
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the sample dataset (replace 'data.csv' with your dataset path)
+df = pd.read_csv('data.csv')
+
+# Display the first few rows of the dataset
+print("Sample Data:")
+print(df.head())
+
+# Summary Statistics for Numeric Variables (age, salary, etc.)
+numeric_summary = df.describe()
+print("\nSummary Statistics for Numeric Variables:")
+print(numeric_summary)
+
+# Additional Statistics: Maximum values, Standard Deviation, Covariance Matrix
+max_values = df.max()
+std_deviation = df.std()
+covariance_matrix = df.cov()
+
+print("\nMaximum Values:")
+print(max_values)
+print("\nStandard Deviation:")
+print(std_deviation)
+print("\nCovariance Matrix:")
+print(covariance_matrix)
+
+# Grouped Summary Statistics by a Categorical Variable (e.g., age_group and salary)
+categorical_variable = 'age_group'  # Replace with your categorical variable
+quantitative_variable = 'salary'     # Replace with your quantitative variable
+
+grouped_summary = df.groupby(categorical_variable)[quantitative_variable].describe()
+print(f"\nGrouped Summary Statistics by {categorical_variable}:")
+print(grouped_summary)
+
+# Create a list of numeric values for each response to the categorical variable
+categorical_values = df[categorical_variable].unique()
+numeric_values_list = [df[df[categorical_variable] == value][quantitative_variable].tolist() for value in categorical_values]
+print("\nNumeric Values for Each Response to the Categorical Variable:")
+print(numeric_values_list)
+
+# Grouping and Counting JOB_ID
+job_id_counts = df['JOB_ID'].value_counts()
+print("\nCount of JOB_ID Groups:")
+print(job_id_counts)
+
+# Data Visualization for any column (e.g., salary)
+column_for_visualization = 'salary'  # Replace with any column name
+
+plt.figure(figsize=(8, 6))
+sns.histplot(df[column_for_visualization], bins=20, kde=True)
+plt.title(f'Distribution of {column_for_visualization}')
+plt.xlabel(column_for_visualization)
+plt.ylabel('Frequency')
+plt.show()

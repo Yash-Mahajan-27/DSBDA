@@ -1,0 +1,47 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from scipy import stats
+
+# Load dataset
+df = pd.read_csv('Academic_Performance.csv')
+
+# Handle missing values
+for column in df.columns:
+    if df[column].dtype == 'object':
+        # Categorical column: Replace missing values with mode
+        mode_value = df[column].mode()[0]
+        df[column].fillna(mode_value, inplace=True)
+    else:
+        # Numeric column: Replace missing values with mean
+        mean_value = df[column].mean()
+        df[column].fillna(mean_value, inplace=True)
+
+# Calculate Z-Score for numeric columns
+z_scores = np.abs(stats.zscore(df.select_dtypes(include=['int64', 'float64'])))
+
+# Set threshold for identifying outliers based on Z-Score
+outlier_threshold = 3
+
+# Identify outliers
+outliers = (z_scores > outlier_threshold).any(axis=1)
+
+# Display outliers
+print("Rows with outliers:")
+print(df[outliers])
+
+# Remove outliers
+df_cleaned = df[~outliers]
+
+# Bin 'age' into categories and create labels
+bins = [0, 20, 30, 40, 50, np.inf]
+labels = ['<20', '20-30', '30-40', '40-50', '50+']
+df_cleaned['age_category'] = pd.cut(df_cleaned['age'], bins=bins, labels=labels)
+
+# Draw box plot for 'score'
+plt.figure(figsize=(8, 6))
+sns.boxplot(x='score', data=df_cleaned)
+plt.title('Box Plot of Score')
+plt.xlabel('Score')
+plt.show()
